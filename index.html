@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluación de Desempeño y Sustentabilidad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --bg:          #F0F1ED;
+      --surface:     #FFFFFF;
+      --dark:        #141B14;
+      --dark-mid:    #243224;
+      --accent:      #4A7860;
+      --accent-bg:   #EBF4EF;
+      --brass:       #B89052;
+      --brass-bg:    #F8F2E3;
+      --brass-border:#E2CC94;
+      --tx:          #1A221A;
+      --tx2:         #5A6C58;
+      --tx3:         #98A494;
+      --border:      #CED8CA;
+      --border-lt:   #E2E9DF;
+      --red:         #822828;
+      --red-bg:      #FDF2F2;
+      --red-border:  #EABABA;
+      --green:       #265C38;
+      --green-bg:    #EEF7F1;
+      --green-border:#A8D8B8;
+      --r:           10px;
+      --r-sm:        6px;
+      --shadow:      0 1px 3px rgba(20,27,20,.04), 0 6px 28px rgba(20,27,20,.07);
+      --shadow-sm:   0 1px 2px rgba(20,27,20,.04);
+      --tr:          180ms ease;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 1.65;
+      background: var(--bg);
+      color: var(--tx);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ============================================================
+       PROGRESS BAR
+    ============================================================ */
+    #progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: var(--brass);
+      width: 0%;
+      transition: width .45s cubic-bezier(.4,0,.2,1);
+      z-index: 9999;
+    }
+    #progress.done { background: var(--accent); }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    .site-header {
+      background: var(--dark);
+      padding: 52px 0 56px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Subtle diagonal grid texture */
+    .site-header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(255,255,255,.018) 0px,
+        rgba(255,255,255,.018) 1px,
+        transparent 1px,
+        transparent 64px
+      );
+      pointer-events: none;
+    }
+    /* Accent bar bottom */
+    .site-header::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--brass) 0%, transparent 60%);
+    }
+
+    .header-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 36px;
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 32px;
+      align-items: start;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Logo placeholder */
+    .logo-box {
+      width: 76px;
+      height: 76px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 9px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+    .logo-box svg {
+      width: 30px; height: 30px;
+      opacity: .38;
+    }
+    .logo-box span {
+      font-size: 8.5px;
+      font-weight: 500;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.28);
+    }
+
+    .header-content {}
+    .header-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin-bottom: 14px;
+    }
+    .header-eyebrow::before {
+      content: '';
+      display: block;
+      width: 18px;
+      height: 1px;
+      background: var(--brass);
+      flex-shrink: 0;
+    }
+    h1.header-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 34px;
+      line-height: 1.12;
+      letter-spacing: -.015em;
+      color: #FFF;
+      margin-bottom: 16px;
+    }
+    .header-privacy {
+      font-size: 11.5px;
+      font-weight: 300;
+      color: rgba(255,255,255,.38);
+      line-height: 1.6;
+      max-width: 510px;
+    }
+    .header-privacy strong {
+      font-weight: 500;
+      color: rgba(255,255,255,.55);
+    }
+
+    /* ============================================================
+       MAIN / WRAPPER
+    ============================================================ */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 36px 80px;
+    }
+
+    /* ============================================================
+       CARDS
+    ============================================================ */
+    .card {
+      background: var(--surface);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 22px 32px 20px;
+      border-bottom: 1px solid var(--border-lt);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Ghost watermark number */
+    .card-head-bg {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 104px;
+      font-weight: 600;
+      color: var(--dark);
+      opacity: .04;
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+      letter-spacing: -.04em;
+    }
+
+    .card-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--brass-bg);
+      border: 1px solid var(--brass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      color: #9A7C38;
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--dark);
+      letter-spacing: .01em;
+      line-height: 1;
+    }
+
+    .card-body {
+      padding: 28px 32px;
+    }
+
+    /* ============================================================
+       FORM ELEMENTS
+    ============================================================ */
+    .field { margin-bottom: 22px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field-label {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--tx2);
+      margin-bottom: 9px;
+    }
+
+    /* Select */
+    .select-wrap {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      max-width: 340px;
+    }
+    .select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-52%) rotate(45deg);
+      width: 7px; height: 7px;
+      border-right: 1.5px solid var(--tx2);
+      border-bottom: 1.5px solid var(--tx2);
+      pointer-events: none;
+    }
+    select {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 10px 38px 10px 13px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      font-weight: 400;
+      color: var(--tx);
+      cursor: pointer;
+      transition: border-color var(--tr), box-shadow var(--tr);
+    }
+    select option[value=""] { color: var(--tx3); }
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(74,120,96,.12);
+    }
+
+    /* Text / Number inputs */
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      color: var(--tx);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      transition: border-color var(--tr), box-shadow var(--tr);
+    }
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(74,120,96,.12);
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 13px;
+    }
+    textarea {
+      width: 100%;
+      padding: 11px 13px;
+      min-height: 100px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       TRANSPORT TABLE
+    ============================================================ */
+    .transport-note {
+      font-size: 12.5px;
+      color: var(--tx3);
+      line-height: 1.55;
+      margin-bottom: 20px;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--border-lt);
+      border-radius: var(--r-sm);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table.t-matrix {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+    }
+    .t-matrix thead tr {
+      background: #F5F7F4;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .t-matrix thead th {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--tx3);
+      padding: 11px 6px;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .t-matrix thead th:first-child {
+      text-align: left;
+      padding-left: 18px;
+      min-width: 216px;
+    }
+    .t-matrix thead th.th-wknd { color: var(--brass); }
+
+    .t-matrix tbody tr {
+      border-bottom: 1px solid var(--border-lt);
+      transition: background var(--tr);
+    }
+    .t-matrix tbody tr:last-child { border-bottom: none; }
+    .t-matrix tbody tr:hover { background: #FAFBF9; }
+
+    .t-matrix tbody td {
+      padding: 8px 5px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .t-matrix tbody td:first-child {
+      text-align: left;
+      padding-left: 18px;
+      padding-right: 14px;
+    }
+
+    .t-mode {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 12.5px;
+      font-weight: 400;
+      color: var(--tx);
+      white-space: nowrap;
+    }
+    .t-icon {
+      font-size: 14px;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    input.km-input {
+      width: 58px;
+      padding: 6px 5px;
+      text-align: center;
+      border-radius: 5px;
+      font-size: 12.5px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.01em;
+    }
+    input.km-input::-webkit-outer-spin-button,
+    input.km-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input.km-input[type=number] { -moz-appearance: textfield; }
+    input.km-input.km-filled {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      color: var(--green);
+    }
+
+    /* ============================================================
+       SATISFACTION SCALE
+    ============================================================ */
+    .sat-caption {
+      font-size: 12.5px;
+      color: var(--tx3);
+      margin-bottom: 14px;
+    }
+
+    .sat-row {
+      display: flex;
+      gap: 5px;
+      align-items: stretch;
+    }
+    .sat-btn {
+      flex: 1;
+      min-width: 0;
+      height: 42px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      background: var(--surface);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--tx2);
+      cursor: pointer;
+      transition: border-color var(--tr), background var(--tr), color var(--tr), box-shadow var(--tr);
+      position: relative;
+    }
+    .sat-btn:hover {
+      border-color: var(--dark);
+      color: var(--dark);
+      z-index: 1;
+    }
+    .sat-btn.active {
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 8px rgba(0,0,0,.18);
+      z-index: 1;
+    }
+    .sat-btn[data-v="1"].active { background: #712020; }
+    .sat-btn[data-v="2"].active { background: #9A2828; }
+    .sat-btn[data-v="3"].active { background: #B86030; }
+    .sat-btn[data-v="4"].active { background: #7E7E38; }
+    .sat-btn[data-v="5"].active { background: #4A8855; }
+    .sat-btn[data-v="6"].active { background: #326844; }
+    .sat-btn[data-v="7"].active { background: #1A4A2A; }
+
+    .sat-extremes {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    .sat-extreme {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--tx3);
+    }
+    input#sat-value { display: none; }
+
+    .sat-feedback {
+      display: none;
+      margin-top: 16px;
+      padding: 11px 15px;
+      border-radius: var(--r-sm);
+      font-size: 12.5px;
+      font-weight: 500;
+      line-height: 1.5;
+      transition: all var(--tr);
+    }
+    .sat-feedback.neg {
+      background: var(--red-bg);
+      border: 1px solid var(--red-border);
+      color: var(--red);
+    }
+    .sat-feedback.pos {
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      color: var(--green);
+    }
+    .sat-feedback.neu {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--tx2);
+    }
+
+    /* ============================================================
+       FACTOR PANELS
+    ============================================================ */
+    .factors-panel {
+      display: none;
+      margin-top: 18px;
+      padding: 18px 20px;
+      border-radius: var(--r-sm);
+    }
+    .factors-panel.neg-panel {
+      background: var(--red-bg);
+      border: 1px solid var(--red-border);
+      animation: slideDown .28s ease forwards;
+    }
+    .factors-panel.pos-panel {
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      animation: slideDown .28s ease forwards;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .factors-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .neg-panel .factors-title { color: var(--red); }
+    .pos-panel .factors-title { color: var(--green); }
+
+    .factors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: 5px;
+    }
+
+    .f-label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background var(--tr);
+    }
+    .f-label:hover { background: rgba(0,0,0,.04); }
+    .f-label input[type="checkbox"] {
+      width: 14px; height: 14px;
+      flex-shrink: 0;
+      cursor: pointer;
+      accent-color: var(--dark);
+    }
+    .f-label span {
+      font-size: 12.5px;
+      color: var(--tx);
+      line-height: 1.3;
+    }
+
+    /* ============================================================
+       CLOSING SECTION
+    ============================================================ */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+      margin-top: 26px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border-lt);
+    }
+    .submit-hint {
+      font-size: 11.5px;
+      color: var(--tx3);
+      line-height: 1.4;
+      max-width: 240px;
+      text-align: right;
+    }
+
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--dark);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 12px 30px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      font-weight: 500;
+      letter-spacing: .02em;
+      cursor: pointer;
+      transition: background var(--tr), transform var(--tr), box-shadow var(--tr);
+      white-space: nowrap;
+    }
+    .btn-submit svg {
+      width: 14px; height: 14px;
+      transition: transform var(--tr);
+      flex-shrink: 0;
+    }
+    .btn-submit:hover {
+      background: var(--dark-mid);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(20,27,20,.22);
+    }
+    .btn-submit:hover svg { transform: translateX(3px); }
+    .btn-submit:active { transform: translateY(0); box-shadow: none; }
+    .btn-submit.sending { opacity: .6; pointer-events: none; }
+
+    /* ============================================================
+       SUCCESS VIEW
+    ============================================================ */
+    #success-view {
+      display: none;
+      text-align: center;
+      background: var(--surface);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding: 72px 36px;
+    }
+    .success-ring {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: var(--green-bg);
+      border: 1.5px solid var(--green-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 26px;
+      font-size: 22px;
+    }
+    .success-h {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+    .success-p {
+      font-size: 13px;
+      color: var(--tx3);
+    }
+
+    /* ============================================================
+       TOAST
+    ============================================================ */
+    #toast {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: var(--dark);
+      color: #fff;
+      padding: 11px 18px;
+      border-radius: var(--r-sm);
+      font-size: 12.5px;
+      font-weight: 500;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all .25s ease;
+      pointer-events: none;
+      z-index: 9999;
+      max-width: 320px;
+      line-height: 1.45;
+    }
+    #toast.visible { opacity: 1; transform: translateY(0); }
+    #toast.toast-err { background: var(--red); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 640px) {
+      .header-inner { grid-template-columns: 1fr; }
+      .logo-box { display: none; }
+      h1.header-title { font-size: 26px; }
+      main { padding: 24px 18px 64px; }
+      .card-body { padding: 22px 20px; }
+      .card-head { padding: 18px 20px 16px; }
+      .card-head-bg { font-size: 72px; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .sat-row { gap: 4px; }
+      .sat-btn { height: 38px; font-size: 12px; }
+      .submit-row { flex-direction: column; align-items: stretch; }
+      .btn-submit { justify-content: center; }
+      .submit-hint { text-align: center; max-width: 100%; }
+    }
+
+    @media (max-width: 400px) {
+      .factors-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Progress bar -->
+  <div id="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+
+  <!-- ============================================================
+       HEADER
+  ============================================================ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo-box" role="img" aria-label="Espacio para logotipo">
+        <svg viewBox="0 0 40 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="2"  y="18" width="7" height="16" fill="white" rx="1"/>
+          <rect x="13" y="10" width="7" height="24" fill="white" rx="1"/>
+          <rect x="24" y="3"  width="7" height="31" fill="white" rx="1"/>
+          <rect x="35" y="14" width="3" height="20" fill="white" rx="1" opacity=".5"/>
+        </svg>
+        <span>Logotipo</span>
+      </div>
+      <div class="header-content">
+        <div class="header-eyebrow">Arc Skoru · Ciclo de evaluación 2024</div>
+        <h1 class="header-title">Evaluación de Desempeño<br>y Sustentabilidad</h1>
+        <p class="header-privacy">
+          La información proporcionada es <strong>estrictamente confidencial</strong> y será utilizada exclusivamente
+          para evaluar el desempeño sustentable del edificio conforme a los parámetros Arc Skoru.
+          El tratamiento de sus datos se realiza conforme a la política de privacidad de la organización.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       MAIN FORM
+  ============================================================ -->
+  <main>
+    <form id="main-form" novalidate>
+
+      <!-- ───────────────────────────────────────────────────────
+           SECCIÓN 01 · TIPO DE OCUPANTE
+      ─────────────────────────────────────────────────────────── -->
+      <section class="card" aria-labelledby="s1-title">
+        <div class="card-head">
+          <div class="card-num" aria-hidden="true">01</div>
+          <h2 class="card-title" id="s1-title">Tipo de ocupante</h2>
+          <span class="card-head-bg" aria-hidden="true">01</span>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <label class="field-label" for="tipo-ocupante">Relación con el edificio</label>
+            <div class="select-wrap">
+              <select id="tipo-ocupante" name="tipo_ocupante" required>
+                <option value="" disabled selected>Seleccione una opción…</option>
+                <option value="ocupante_regular">Ocupante regular</option>
+                <option value="visitante">Visitante</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────────────────────────────────────────
+           SECCIÓN 02 · TRANSPORTE
+      ─────────────────────────────────────────────────────────── -->
+      <section class="card" aria-labelledby="s2-title">
+        <div class="card-head">
+          <div class="card-num" aria-hidden="true">02</div>
+          <h2 class="card-title" id="s2-title">Registro de transporte semanal</h2>
+          <span class="card-head-bg" aria-hidden="true">02</span>
+        </div>
+        <div class="card-body">
+          <p class="transport-note">
+            Ingrese la distancia en kilómetros (km) recorrida con cada modo de transporte por día de la semana.
+            Deje en blanco los campos no aplicables. Los días del fin de semana aparecen resaltados.
+          </p>
+          <div class="table-scroll" role="region" aria-label="Tabla de transporte semanal" tabindex="0">
+            <table class="t-matrix" id="t-matrix">
+              <thead>
+                <tr>
+                  <th scope="col">Modo de transporte</th>
+                  <th scope="col">Lun</th>
+                  <th scope="col">Mar</th>
+                  <th scope="col">Mié</th>
+                  <th scope="col">Jue</th>
+                  <th scope="col">Vie</th>
+                  <th scope="col" class="th-wknd">Sáb</th>
+                  <th scope="col" class="th-wknd">Dom</th>
+                </tr>
+              </thead>
+              <tbody id="t-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────────────────────────────────────────
+           SECCIÓN 03 · SATISFACCIÓN
+      ─────────────────────────────────────────────────────────── -->
+      <section class="card" aria-labelledby="s3-title">
+        <div class="card-head">
+          <div class="card-num" aria-hidden="true">03</div>
+          <h2 class="card-title" id="s3-title">Experiencia en el espacio</h2>
+          <span class="card-head-bg" aria-hidden="true">03</span>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <label class="field-label" id="sat-label">Calificación general de su experiencia</label>
+            <p class="sat-caption">Seleccione un valor del 1 (extremadamente insatisfecho) al 7 (extremadamente satisfecho).</p>
+
+            <div class="sat-row" id="sat-row" role="group" aria-labelledby="sat-label">
+              <button type="button" class="sat-btn" data-v="1" aria-label="1 — Extremadamente insatisfecho">1</button>
+              <button type="button" class="sat-btn" data-v="2" aria-label="2 — Insatisfecho">2</button>
+              <button type="button" class="sat-btn" data-v="3" aria-label="3 — Algo insatisfecho">3</button>
+              <button type="button" class="sat-btn" data-v="4" aria-label="4 — Neutral">4</button>
+              <button type="button" class="sat-btn" data-v="5" aria-label="5 — Algo satisfecho">5</button>
+              <button type="button" class="sat-btn" data-v="6" aria-label="6 — Satisfecho">6</button>
+              <button type="button" class="sat-btn" data-v="7" aria-label="7 — Extremadamente satisfecho">7</button>
+            </div>
+            <div class="sat-extremes" aria-hidden="true">
+              <span class="sat-extreme">Extremadamente insatisfecho</span>
+              <span class="sat-extreme">Extremadamente satisfecho</span>
+            </div>
+            <input type="hidden" id="sat-value" name="satisfaccion" value="">
+
+            <!-- Feedback label -->
+            <div id="sat-feedback" class="sat-feedback" role="status" aria-live="polite"></div>
+
+            <!-- Negative factors -->
+            <div id="neg-panel" class="factors-panel neg-panel" role="group" aria-label="Factores negativos">
+              <div class="factors-title">¿Qué aspectos afectan negativamente su experiencia?</div>
+              <div class="factors-grid" id="neg-grid"></div>
+            </div>
+
+            <!-- Positive factors -->
+            <div id="pos-panel" class="factors-panel pos-panel" role="group" aria-label="Factores positivos">
+              <div class="factors-title">¿Qué aspectos contribuyen positivamente a su experiencia?</div>
+              <div class="factors-grid" id="pos-grid"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────────────────────────────────────────
+           SECCIÓN 04 · CIERRE
+      ─────────────────────────────────────────────────────────── -->
+      <section class="card" aria-labelledby="s4-title">
+        <div class="card-head">
+          <div class="card-num" aria-hidden="true">04</div>
+          <h2 class="card-title" id="s4-title">Información adicional</h2>
+          <span class="card-head-bg" aria-hidden="true">04</span>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <label class="field-label" for="comentarios">Comentarios u observaciones</label>
+            <textarea
+              id="comentarios"
+              name="comentarios"
+              placeholder="Comparta observaciones, sugerencias o cualquier información relevante sobre su experiencia en el edificio…"
+            ></textarea>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" for="ubicacion">Ubicación / Área del edificio</label>
+              <input
+                type="text"
+                id="ubicacion"
+                name="ubicacion"
+                placeholder="Ej. Piso 4, Sala de juntas B…"
+              >
+            </div>
+          </div>
+
+          <div class="submit-row">
+            <span class="submit-hint">Solo el tipo de ocupante es requerido. Todos los demás campos son opcionales.</span>
+            <button type="submit" class="btn-submit" id="btn-enviar">
+              Enviar evaluación
+              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M2 8H14M9 3L14 8L9 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+    </form>
+
+    <!-- Success state -->
+    <div id="success-view" role="alert" aria-live="assertive">
+      <div class="success-ring" aria-hidden="true">✓</div>
+      <h2 class="success-h">Evaluación registrada</h2>
+      <p class="success-p">Gracias por su participación. Sus respuestas han sido guardadas correctamente.</p>
+    </div>
+  </main>
+
+  <div id="toast" role="alert" aria-live="assertive"></div>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+  // ================================================================
+  //  ★ CONFIGURACIÓN — Pegue aquí la URL de su Apps Script Web App
+  // ================================================================
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwa_NlA5U8HdmOgrbWo2k4ZnSqvKRCBxBdbifaTwxo_4TWR0YdwJSLzVtHaly4Oy6wweg/exec';
+
+  // ================================================================
+  //  DATOS — Modos de transporte y días
+  // ================================================================
+  const TRANSPORT_MODES = [
+    { key: 'caminar',        label: 'Caminar',                            icon: '🚶' },
+    { key: 'bicicleta',      label: 'Bicicleta o patinetes',              icon: '🚲' },
+    { key: 'telecommutar',   label: 'Telecommutar',                       icon: '💻' },
+    { key: 'motocicleta',    label: 'Motocicleta',                        icon: '🏍️'  },
+    { key: 'tren',           label: 'Tren',                               icon: '🚆' },
+    { key: 'carpool',        label: 'Compartir coche (2–3 personas)',      icon: '🚗' },
+    { key: 'auto_alt',       label: 'Automóvil combustible alternativo',   icon: '⚡' },
+    { key: 'tren_ligero',    label: 'Tren ligero / Metro',                 icon: '🚇' },
+    { key: 'bus',            label: 'Autobús',                            icon: '🚌' },
+    { key: 'auto_solo',      label: 'Automóvil solo',                     icon: '🚙' },
+  ];
+
+  const DAYS = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
+
+  const SAT_INFO = {
+    1: { cls: 'neg', text: 'Extremadamente insatisfecho — Por favor indique los factores que afectan su experiencia.' },
+    2: { cls: 'neg', text: 'Insatisfecho — Indique los factores que considera más problemáticos.' },
+    3: { cls: 'neg', text: 'Algo insatisfecho — Seleccione los aspectos que más influyen negativamente.' },
+    4: { cls: 'neu', text: 'Neutral — Su experiencia es aceptable. No se requiere selección de factores.' },
+    5: { cls: 'pos', text: 'Algo satisfecho — Indique los aspectos que más valora de este espacio.' },
+    6: { cls: 'pos', text: 'Satisfecho — Seleccione los aspectos que contribuyen a su bienestar.' },
+    7: { cls: 'pos', text: 'Extremadamente satisfecho — Indique qué hace que este espacio sea excelente.' },
+  };
+
+  const NEG_FACTORS = [
+    'Sucio', 'Maloliente', 'Mal ventilado', 'Acústica deficiente',
+    'Caluroso', 'Frío', 'Oscuro', 'Deslumbramiento',
+    'Falta de privacidad', 'Húmedo', 'Corrientes de aire',
+    'Exceso de luz', 'Sin vistas al exterior', 'Ruidoso',
+  ];
+
+  const POS_FACTORS = [
+    'Confort térmico', 'Limpieza', 'Vistas al exterior', 'Buena acústica',
+    'Bien iluminado', 'Acceso a luz de día', 'Calidad del aire', 'Privacidad',
+  ];
+
+  // ================================================================
+  //  BUILD — Tabla de transporte
+  // ================================================================
+  (function buildTransportTable() {
+    const tbody = document.getElementById('t-body');
+    TRANSPORT_MODES.forEach(function(mode) {
+      const tr = document.createElement('tr');
+
+      // Label cell
+      const tdLabel = document.createElement('td');
+      tdLabel.innerHTML =
+        '<div class="t-mode">' +
+          '<span class="t-icon" aria-hidden="true">' + mode.icon + '</span>' +
+          '<span>' + mode.label + '</span>' +
+        '</div>';
+      tr.appendChild(tdLabel);
+
+      // Day cells
+      DAYS.forEach(function(day) {
+        const td = document.createElement('td');
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'km-input';
+        input.name = 'tr_' + mode.key + '_' + day;
+        input.min = '0';
+        input.max = '999';
+        input.step = '0.5';
+        input.placeholder = '–';
+        input.setAttribute('aria-label', mode.label + ' – ' + day + ' (km)');
+        input.addEventListener('input', function() {
+          input.classList.toggle('km-filled', input.value !== '' && parseFloat(input.value) > 0);
+          updateProgress();
+        });
+        td.appendChild(input);
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    });
+  })();
+
+  // ================================================================
+  //  BUILD — Checkboxes de factores
+  // ================================================================
+  function buildFactorCheckboxes(gridId, items, prefix) {
+    const grid = document.getElementById(gridId);
+    items.forEach(function(item) {
+      const slugKey = prefix + '_' + item
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '_')
+        .replace(/[^a-z0-9_]/g, '');
+
+      const lbl = document.createElement('label');
+      lbl.className = 'f-label';
+      lbl.innerHTML =
+        '<input type="checkbox" name="factor_' + slugKey + '" value="' + item + '">' +
+        '<span>' + item + '</span>';
+      grid.appendChild(lbl);
+    });
+  }
+  buildFactorCheckboxes('neg-grid', NEG_FACTORS, 'neg');
+  buildFactorCheckboxes('pos-grid', POS_FACTORS, 'pos');
+
+  // ================================================================
+  //  SATISFACCIÓN — Lógica de escala y paneles condicionales
+  // ================================================================
+  const satBtns    = document.querySelectorAll('.sat-btn');
+  const satInput   = document.getElementById('sat-value');
+  const satFeedback = document.getElementById('sat-feedback');
+  const negPanel   = document.getElementById('neg-panel');
+  const posPanel   = document.getElementById('pos-panel');
+
+  satBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const v = parseInt(btn.dataset.v, 10);
+      satInput.value = v;
+
+      // Active state on buttons
+      satBtns.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+
+      // Feedback text
+      const info = SAT_INFO[v];
+      satFeedback.textContent = info.text;
+      satFeedback.className = 'sat-feedback ' + info.cls;
+      satFeedback.style.display = 'block';
+
+      // Conditional panels
+      if (info.cls === 'neg') {
+        negPanel.style.display = 'block';
+        posPanel.style.display = 'none';
+        posPanel.querySelectorAll('input[type="checkbox"]').forEach(function(c) { c.checked = false; });
+      } else if (info.cls === 'pos') {
+        posPanel.style.display = 'block';
+        negPanel.style.display = 'none';
+        negPanel.querySelectorAll('input[type="checkbox"]').forEach(function(c) { c.checked = false; });
+      } else {
+        negPanel.style.display = 'none';
+        posPanel.style.display = 'none';
+        negPanel.querySelectorAll('input[type="checkbox"]').forEach(function(c) { c.checked = false; });
+        posPanel.querySelectorAll('input[type="checkbox"]').forEach(function(c) { c.checked = false; });
+      }
+
+      updateProgress();
+    });
+  });
+
+  // ================================================================
+  //  PROGRESS BAR
+  // ================================================================
+  function updateProgress() {
+    let score = 0;
+    if (document.getElementById('tipo-ocupante').value) score += 30;
+    const hasKm = Array.from(document.querySelectorAll('.km-input'))
+      .some(function(i) { return parseFloat(i.value) > 0; });
+    if (hasKm) score += 25;
+    if (satInput.value) score += 30;
+    if (document.getElementById('ubicacion').value ||
+        document.getElementById('comentarios').value) score += 15;
+
+    const bar = document.getElementById('progress');
+    bar.style.width = Math.min(score, 95) + '%';
+    bar.setAttribute('aria-valuenow', score);
+  }
+
+  ['tipo-ocupante', 'comentarios', 'ubicacion'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateProgress);
+    if (el) el.addEventListener('change', updateProgress);
+  });
+
+  // ================================================================
+  //  ENVÍO
+  // ================================================================
+  document.getElementById('main-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    // Validate required field
+    if (!document.getElementById('tipo-ocupante').value) {
+      showToast('Seleccione el tipo de ocupante para continuar.', true);
+      document.getElementById('tipo-ocupante').focus();
+      return;
+    }
+
+    const btn = document.getElementById('btn-enviar');
+    btn.textContent = 'Enviando…';
+    btn.classList.add('sending');
+
+    // ── Build payload ──────────────────────────────────────────
+    const payload = {
+      timestamp:     new Date().toISOString(),
+      tipo_ocupante: document.getElementById('tipo-ocupante').value,
+      satisfaccion:  satInput.value || '',
+      comentarios:   document.getElementById('comentarios').value.trim(),
+      ubicacion:     document.getElementById('ubicacion').value.trim(),
+      factores:      '',
+      transporte:    {},
+    };
+
+    // Transport data — only non-zero values
+    TRANSPORT_MODES.forEach(function(mode) {
+      DAYS.forEach(function(day) {
+        const inp = document.querySelector('input[name="tr_' + mode.key + '_' + day + '"]');
+        const v = inp && inp.value !== '' ? parseFloat(inp.value) : 0;
+        if (v > 0) payload.transporte[mode.key + '_' + day] = v;
+      });
+    });
+
+    // Selected factors
+    const checkedFactors = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+      .map(function(c) { return c.value; });
+    payload.factores = checkedFactors.join(', ');
+
+    // ── Send to Apps Script ────────────────────────────────────
+    // Uses text/plain to avoid CORS preflight (Apps Script limitation).
+    // The data arrives as e.postData.contents and is parsed as JSON.
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        body: JSON.stringify(payload),
+      });
+      // no-cors = opaque response; assume success if no network error
+      showSuccess();
+    } catch (err) {
+      console.error('Send error:', err);
+      btn.innerHTML =
+        'Enviar evaluación ' +
+        '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<path d="M2 8H14M9 3L14 8L9 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>';
+      btn.classList.remove('sending');
+      showToast('Error de conexión. Verifique su red e intente de nuevo.', true);
+    }
+  });
+
+  // ================================================================
+  //  HELPERS
+  // ================================================================
+  function showSuccess() {
+    document.getElementById('main-form').style.display = 'none';
+    const sv = document.getElementById('success-view');
+    sv.style.display = 'block';
+    const bar = document.getElementById('progress');
+    bar.style.width = '100%';
+    bar.classList.add('done');
+    bar.setAttribute('aria-valuenow', 100);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showToast(msg, isErr) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'visible' + (isErr ? ' toast-err' : '');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function() {
+      t.className = isErr ? 'toast-err' : '';
+    }, 3800);
+  }
+  </script>
+</body>
+</html>
