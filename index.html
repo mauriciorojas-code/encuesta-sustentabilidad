@@ -311,9 +311,10 @@
       box-shadow: 0 0 0 3px rgba(74,120,96,.12);
     }
 
-    /* Text / Number inputs */
+    /* Text / Number / Email inputs */
     input[type="text"],
     input[type="number"],
+    input[type="email"],
     textarea {
       font-family: 'Inter', sans-serif;
       font-size: 13.5px;
@@ -325,6 +326,7 @@
     }
     input[type="text"]:focus,
     input[type="number"]:focus,
+    input[type="email"]:focus,
     textarea:focus {
       outline: none;
       border-color: var(--accent);
@@ -735,12 +737,17 @@
   ============================================================ -->
   <header class="site-header">
     <div class="header-inner">
-     <div class="logo-box" role="img" aria-label="Logotipo de la empresa" style="border: none; background: transparent;">
-        <!-- Reemplaza "mi-logo.png" con el nombre exacto de tu archivo de imagen -->
-        <img src="mi-logo.png" alt="Logotipo" style="width: 100%; height: 100%; object-fit: contain;">
+      <div class="logo-box" role="img" aria-label="Espacio para logotipo">
+        <svg viewBox="0 0 40 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="2"  y="18" width="7" height="16" fill="white" rx="1"/>
+          <rect x="13" y="10" width="7" height="24" fill="white" rx="1"/>
+          <rect x="24" y="3"  width="7" height="31" fill="white" rx="1"/>
+          <rect x="35" y="14" width="3" height="20" fill="white" rx="1" opacity=".5"/>
+        </svg>
+        <span>Logotipo</span>
       </div>
       <div class="header-content">
-        <div class="header-eyebrow">Arc Skoru · Ciclo de evaluación 2026</div>
+        <div class="header-eyebrow">Arc Skoru · Ciclo de evaluación 2024</div>
         <h1 class="header-title">Evaluación de Desempeño<br>y Sustentabilidad</h1>
         <p class="header-privacy">
           La información proporcionada es <strong>estrictamente confidencial</strong> y será utilizada exclusivamente
@@ -758,13 +765,59 @@
     <form id="main-form" novalidate>
 
       <!-- ───────────────────────────────────────────────────────
-           SECCIÓN 01 · TIPO DE OCUPANTE
+           SECCIÓN 01 · IDENTIFICACIÓN DEL RESPONDENTE
+      ─────────────────────────────────────────────────────────── -->
+      <section class="card" aria-labelledby="s0-title">
+        <div class="card-head">
+          <div class="card-num" aria-hidden="true">01</div>
+          <h2 class="card-title" id="s0-title">Identificación del respondente</h2>
+          <span class="card-head-bg" aria-hidden="true">01</span>
+        </div>
+        <div class="card-body">
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" for="nombre">
+                Nombre completo
+                <span style="color:var(--red);margin-left:2px;" title="Requerido">*</span>
+              </label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                placeholder="Ej. María García López"
+                autocomplete="name"
+                required
+              >
+            </div>
+            <div class="field">
+              <label class="field-label" for="correo">
+                Correo electrónico
+                <span style="color:var(--red);margin-left:2px;" title="Requerido">*</span>
+              </label>
+              <input
+                type="email"
+                id="correo"
+                name="correo"
+                placeholder="correo@empresa.com"
+                autocomplete="email"
+                required
+              >
+            </div>
+          </div>
+          <p style="font-size:11.5px;color:var(--tx3);margin-top:4px;line-height:1.5;">
+            Sus datos de identificación son necesarios para dar seguimiento a las evaluaciones. Serán tratados conforme a la política de privacidad de la organización.
+          </p>
+        </div>
+      </section>
+
+      <!-- ───────────────────────────────────────────────────────
+           SECCIÓN 02 · TIPO DE OCUPANTE
       ─────────────────────────────────────────────────────────── -->
       <section class="card" aria-labelledby="s1-title">
         <div class="card-head">
-          <div class="card-num" aria-hidden="true">01</div>
+          <div class="card-num" aria-hidden="true">02</div>
           <h2 class="card-title" id="s1-title">Tipo de ocupante</h2>
-          <span class="card-head-bg" aria-hidden="true">01</span>
+          <span class="card-head-bg" aria-hidden="true">02</span>
         </div>
         <div class="card-body">
           <div class="field">
@@ -781,13 +834,13 @@
       </section>
 
       <!-- ───────────────────────────────────────────────────────
-           SECCIÓN 02 · TRANSPORTE
+           SECCIÓN 03 · TRANSPORTE
       ─────────────────────────────────────────────────────────── -->
       <section class="card" aria-labelledby="s2-title">
         <div class="card-head">
-          <div class="card-num" aria-hidden="true">02</div>
+          <div class="card-num" aria-hidden="true">03</div>
           <h2 class="card-title" id="s2-title">Registro de transporte semanal</h2>
-          <span class="card-head-bg" aria-hidden="true">02</span>
+          <span class="card-head-bg" aria-hidden="true">03</span>
         </div>
         <div class="card-body">
           <p class="transport-note">
@@ -815,13 +868,13 @@
       </section>
 
       <!-- ───────────────────────────────────────────────────────
-           SECCIÓN 03 · SATISFACCIÓN
+           SECCIÓN 04 · SATISFACCIÓN
       ─────────────────────────────────────────────────────────── -->
       <section class="card" aria-labelledby="s3-title">
         <div class="card-head">
-          <div class="card-num" aria-hidden="true">03</div>
+          <div class="card-num" aria-hidden="true">04</div>
           <h2 class="card-title" id="s3-title">Experiencia en el espacio</h2>
-          <span class="card-head-bg" aria-hidden="true">03</span>
+          <span class="card-head-bg" aria-hidden="true">04</span>
         </div>
         <div class="card-body">
           <div class="field">
@@ -862,13 +915,13 @@
       </section>
 
       <!-- ───────────────────────────────────────────────────────
-           SECCIÓN 04 · CIERRE
+           SECCIÓN 05 · CIERRE
       ─────────────────────────────────────────────────────────── -->
       <section class="card" aria-labelledby="s4-title">
         <div class="card-head">
-          <div class="card-num" aria-hidden="true">04</div>
+          <div class="card-num" aria-hidden="true">05</div>
           <h2 class="card-title" id="s4-title">Información adicional</h2>
-          <span class="card-head-bg" aria-hidden="true">04</span>
+          <span class="card-head-bg" aria-hidden="true">05</span>
         </div>
         <div class="card-body">
           <div class="field">
@@ -892,7 +945,7 @@
           </div>
 
           <div class="submit-row">
-            <span class="submit-hint">Solo el tipo de ocupante es requerido. Todos los demás campos son opcionales.</span>
+            <span class="submit-hint">Los campos marcados con <span style="color:var(--red);">*</span> son obligatorios.</span>
             <button type="submit" class="btn-submit" id="btn-enviar">
               Enviar evaluación
               <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -921,7 +974,7 @@
   // ================================================================
   //  ★ CONFIGURACIÓN — Pegue aquí la URL de su Apps Script Web App
   // ================================================================
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwa_NlA5U8HdmOgrbWo2k4ZnSqvKRCBxBdbifaTwxo_4TWR0YdwJSLzVtHaly4Oy6wweg/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec';
 
   // ================================================================
   //  DATOS — Modos de transporte y días
@@ -1076,20 +1129,24 @@
   // ================================================================
   function updateProgress() {
     let score = 0;
-    if (document.getElementById('tipo-ocupante').value) score += 30;
+    const nombre  = document.getElementById('nombre').value.trim();
+    const correo  = document.getElementById('correo').value.trim();
+    const isEmailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+    if (nombre && correo && isEmailOk) score += 25;
+    if (document.getElementById('tipo-ocupante').value) score += 20;
     const hasKm = Array.from(document.querySelectorAll('.km-input'))
       .some(function(i) { return parseFloat(i.value) > 0; });
-    if (hasKm) score += 25;
-    if (satInput.value) score += 30;
+    if (hasKm) score += 20;
+    if (satInput.value) score += 20;
     if (document.getElementById('ubicacion').value ||
-        document.getElementById('comentarios').value) score += 15;
+        document.getElementById('comentarios').value) score += 10;
 
     const bar = document.getElementById('progress');
     bar.style.width = Math.min(score, 95) + '%';
     bar.setAttribute('aria-valuenow', score);
   }
 
-  ['tipo-ocupante', 'comentarios', 'ubicacion'].forEach(function(id) {
+  ['nombre', 'correo', 'tipo-ocupante', 'comentarios', 'ubicacion'].forEach(function(id) {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', updateProgress);
     if (el) el.addEventListener('change', updateProgress);
@@ -1101,7 +1158,26 @@
   document.getElementById('main-form').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    // Validate required field
+    // Validate required fields
+    const nombre = document.getElementById('nombre').value.trim();
+    const correo = document.getElementById('correo').value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!nombre) {
+      showToast('Ingrese su nombre completo para continuar.', true);
+      document.getElementById('nombre').focus();
+      return;
+    }
+    if (!correo) {
+      showToast('Ingrese su correo electrónico para continuar.', true);
+      document.getElementById('correo').focus();
+      return;
+    }
+    if (!emailRegex.test(correo)) {
+      showToast('El correo electrónico no tiene un formato válido.', true);
+      document.getElementById('correo').focus();
+      return;
+    }
     if (!document.getElementById('tipo-ocupante').value) {
       showToast('Seleccione el tipo de ocupante para continuar.', true);
       document.getElementById('tipo-ocupante').focus();
@@ -1115,6 +1191,8 @@
     // ── Build payload ──────────────────────────────────────────
     const payload = {
       timestamp:     new Date().toISOString(),
+      nombre:        nombre,
+      correo:        correo,
       tipo_ocupante: document.getElementById('tipo-ocupante').value,
       satisfaccion:  satInput.value || '',
       comentarios:   document.getElementById('comentarios').value.trim(),
@@ -1183,7 +1261,6 @@
     t._timer = setTimeout(function() {
       t.className = isErr ? 'toast-err' : '';
     }, 3800);
-    
   }
   </script>
 </body>
