@@ -844,14 +844,17 @@
         </div>
         <div class="card-body">
           <p class="transport-note">
-            Ingrese la distancia en kilómetros (km) recorrida con cada modo de transporte por día de la semana.
-            Deje en blanco los campos no aplicables. Los días del fin de semana aparecen resaltados.
+            Registre únicamente la distancia <strong>de ida</strong> — es decir, de su punto de origen al edificio (por ejemplo, de su casa al trabajo).
+            <strong>No incluya el regreso.</strong> Ingrese los kilómetros por modo de transporte y día de la semana; deje en blanco los días no aplicables.
           </p>
           <div class="table-scroll" role="region" aria-label="Tabla de transporte semanal" tabindex="0">
             <table class="t-matrix" id="t-matrix">
               <thead>
                 <tr>
-                  <th scope="col">Modo de transporte</th>
+                  <th scope="col" style="text-align:left; padding-left:18px; min-width:216px;">
+                    Modo de transporte
+                    <div style="font-size:9px; font-weight:400; color:var(--brass); letter-spacing:.04em; margin-top:2px; text-transform:none;">Solo distancia de ida (km)</div>
+                  </th>
                   <th scope="col">Lun</th>
                   <th scope="col">Mar</th>
                   <th scope="col">Mié</th>
@@ -1265,5 +1268,6 @@
   </script>
 </body>
 </html>
+
 
 
